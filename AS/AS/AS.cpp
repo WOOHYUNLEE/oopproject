@@ -3,18 +3,60 @@
 
 #include <iostream>
 
-int main()
-{
-    std::cout << "Hello World!\n";
+class Stud {
+	수강 과목 확인
+		현재 과제 확인(제출 및 미제출 확인)
+		교수님 office hour 확인 및 예약
+
+		과제 어레이 = vector 활용 //#include <Vector>
+};
+
+class Prof {
+	과목 확인
+		과제 추가(과목, 마감일, 제목, 내용, 경고창)
+		office hour 추가 및 수정
+};
+
+class Admin {
+	int signinorlogin(int value) {
+		switch (value == 0)
+			login();
+		signin();
+	}
+
+	int login() {
+		check valid != txt에서 존재하는지 확인
+			- invalid : signinorlogin()으로
+			- valid : return stud or profess
+	}
+
+	int signin() {
+		직책 학번 이름 듣는과목들 과목들의과제
+			학생 교수 모두 해당되는 과목 입력(선택지 중에 선택)
+			객체를 만듦 = txt 파일에 저장
+			return signinorlogin()
+	}
+
+	void delete() {
+		객체 지우기
+	}
 }
 
-// 프로그램 실행: <Ctrl+F5> 또는 [디버그] > [디버깅하지 않고 시작] 메뉴
-// 프로그램 디버그: <F5> 키 또는 [디버그] > [디버깅 시작] 메뉴
+? ? textreader(feiwfsdf) {
+	사람따로 과목따로
 
-// 시작을 위한 팁: 
-//   1. [솔루션 탐색기] 창을 사용하여 파일을 추가/관리합니다.
-//   2. [팀 탐색기] 창을 사용하여 소스 제어에 연결합니다.
-//   3. [출력] 창을 사용하여 빌드 출력 및 기타 메시지를 확인합니다.
-//   4. [오류 목록] 창을 사용하여 오류를 봅니다.
-//   5. [프로젝트] > [새 항목 추가]로 이동하여 새 코드 파일을 만들거나, [프로젝트] > [기존 항목 추가]로 이동하여 기존 코드 파일을 프로젝트에 추가합니다.
-//   6. 나중에 이 프로젝트를 다시 열려면 [파일] > [열기] > [프로젝트]로 이동하고 .sln 파일을 선택합니다.
+}
+
+int main() {
+
+	교수님이 가입하면서 과목들을 모두 만든 후
+		학생이 과목 입력 가능하다고 가정
+
+		Admin a;
+	while (1) {
+		cout << "어떤 활동을 하시겠습니까?" << endl;
+		cout << "1.sign in\n2.login\n0.exit";
+		cin >> value;
+		user = a.signinorlogin(value);
+
+	};

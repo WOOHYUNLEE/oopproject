@@ -1,13 +1,14 @@
 #pragma once
 
 #include <iostream>
+using namespace std;
 
-class Person() {
+class Person {
 	string name;
 	int id;
 };
 
-class Student() : public Person {
+class Student : public Person {
 	vector assignment;
 
 public:
@@ -15,20 +16,20 @@ public:
 
 };
 
-class Professor() : public Person {
+class Professor : public Person {
 
 	void assign();
 
 };
 
-class Assignment() : public Subject {
+class Assignment : public Subject {
 	string name;
 	string contents;
 	string deadline;
 	int studnum;
 };
 
-class Subject() {
+class Subject {
 	분반없음, 1과목 1교수
 		string name;
 	string professor;
@@ -36,11 +37,13 @@ class Subject() {
 
 };
 
-class Admin() {
-	Person signinorlogin(int value);
+class Admin {
+	Person signup_login(int value);
 	Person login();
 	void signin();
+	void remove();
 
-	removeassignment();
+	//removeassignment();
+	//늦게 제출하는 경우도 있을 테니 그냥 안 써도 될 거 같습니다.
 
 };

@@ -30,7 +30,7 @@ class User {
 
 class Student : public User {
 	vector<Subject*> st_subjects;
-	jui
+	juijkㅇ나런ㅇ라ㅓ
 public:
 	void check_sujects();
 	void check_assignment(); //subject 중에는 assignment가 존재하지 않을 수도 있음을 고려해야 함.

@@ -7,9 +7,6 @@ using namespace std;
 void texteditor();
 
 class Admin {
-	vector<Professor*> s_professor;
-	vector<Assignment*> a_assignments;
-	vector<Student*> s_students;
 	User login(); //validation based on text(1)
 	void signup();//객체를 생성하고 동적할당 하고 텍스트 저장(1)
 	//교수면 교수랑, 과목을 만들고 자기한테 있는 목록에 추가
@@ -17,7 +14,7 @@ class Admin {
 	void remove_user(); //User 객체를 지움(동적할당 해제, 텍스트(1)에서 삭제)
 	//학생을 지우면 과목 목록에서 학생들을 지우고
 	//교수를 지우면 과목도 지우고 학생들한테 있는 과목 리스트에서도 삭제해야 함.
-	//delete 쓰느라 힘들 거 같은데 힘들면 안 빼도 될 듯
+	//delete 쓰느라 힘들 거 같은데 힘들면 함수 빼도 될 듯
 
 	void remove_assignment();//텍스트(2)
 	//늦게 제출할 수도 있으니 마감일으로부터 3일이 지나면 지우기
@@ -30,8 +27,7 @@ class User {
 
 class Student : public User {
 	vector<Subject*> st_subjects;
-	juijkㅇ나런ㅇ라ㅓ
-	juivhjhvj
+
 public:
 	void check_sujects();
 	void check_assignment(); //subject 중에는 assignment가 존재하지 않을 수도 있음을 고려해야 함.

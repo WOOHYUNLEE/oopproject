@@ -14,7 +14,7 @@ void Admin::helper(int& action, string& info, int& position) {
 	string name="ㅎㅎ";
 	list<string> subjects;
 	subjects.push_back("d");
-	switch (action) {
+	switch (action) { //과목 코드 문제, 번호로 받은 거를 목록에서 찾아서 과목명으로?
 	case 1:
 		//info를 id, name, subjects로 나눔
 		signup(position, id, name, subjects);
@@ -26,14 +26,15 @@ void Admin::helper(int& action, string& info, int& position) {
 	}
 }
 
-void Admin::signup(int& position, int& id, string& name, list<string>& subjects) {
+void Admin::signup(int& position, int& id, string& name, list<string>& sub_id) {
 	switch (position) { //외부 데이터에 저장
 	case 1: {
-		Professor* prof = new Professor(id, name, subjects);
+		//list의 크기가 1이여야 한다.
+		Professor* prof = new Professor(id, name, sub_id);
 		professors.insert(pair<int, Professor*>(id, prof));
-		break;}
+		break; }
 	case 2: {
-		Student* stud = new Student(id, name, subjects);
+		Student* stud = new Student(id, name, sub_id);
 		students.insert(pair<int, Student*>(id, stud));
 		break; }
 	}
@@ -41,15 +42,18 @@ void Admin::signup(int& position, int& id, string& name, list<string>& subjects)
 
 void Admin::login(int position, int id, string name) {
 	try {
+		User* obj = nullptr;
 		switch (position) {
 		case 1:
-			connector = professors.at(id);
+			obj = professors.at(id);
 			break;
 		case 2:
-			connector = students.at(id);
+			obj = students.at(id);
 			break;
 		}
-	}
+		assert(obj->getName() == name);
+		connector = obj;
+		}
 	catch(...) {
 		cout << "Error, Please chek your information";
 		return;
@@ -86,7 +90,7 @@ bool Admin::operator==(const Admin& other) {
 	return this == &other;
 }
 
-void exit(int input) { if (input == 0) exit(-1); }
+void ifexit(int input) { if (input == 0) exit(-1); }
 
 int main() {
 	Admin& admin = Admin::getInst();
@@ -100,33 +104,45 @@ int main() {
 		cout << "sign up or login?\n";
 		cout << "1. sign up \n2. login\n0. exit\n";
 		cin >> action;
-		exit(action);
+		ifexit(action);
 		cout << "professor or student?\n";
 		cout << "1. professor \n2. student\n0. exit\n";
 		cin >> position;
-		exit(position);
+		ifexit(position);
+		cin.ignore();
+
 		switch (action) {
-		case 1:
-			cout << "write your information(id / name / subject)\n";
-			cin.ignore();
-			getline(cin, info);
+		case 1: //가입
+			switch (position) {
+			case 1:
+				cout << "write your information(id / name / id_subject / subject)\n";
+				getline(cin, info);
+				break;
+			case 2:
+				cout << "write your information(id / name / subject)\n";
+				getline(cin, info);
+				break;
+			}
 			break;
-		case 2:
+		case 2: //로그인
 			cout << "write your information(id / name)\n";
-			cin.ignore();
 			getline(cin, info);
 			break;
 		}
 		admin.helper(action, info, position);
 	} while (!admin.isconnected()); //가입 혹은 로그인하는 구간
 
-	cout << "professor " << 23 << ", welcome to the scheduler!\n";
-	cout << "what do you want to do?\n";
-	cout << "1. add assignment \n2. post office hour \n3. check students' assignment \n0. exit\n";
-	cout << "1\n";
-	cout << "please write information of assignment\n       subject      :   name    :    contents    : due date\n";
-	cout << " 객체지향프로그래밍 :assignment2: making ivector : 20191212\n";
-	cout << "warning! some of the students have too many assginments!";
+	User& connector = admin.getConnector();
+	cout<< connector.getPosition() << " " << connector.getName() << ", Welcome to the Scheduler!\n";
+
+
+	//cout << "professor " << 23 << ", welcome to the scheduler!\n";
+	//cout << "what do you want to do?\n";
+	//cout << "1. add assignment \n2. post office hour \n3. check students' assignment \n0. exit\n";
+	//cout << "1\n";
+	//cout << "please write information of assignment\n       subject      :   name    :    contents    : due date\n";
+	//cout << " 객체지향프로그래밍 :assignment2: making ivector : 20191212\n";
+	//cout << "warning! some of the students have too many assginments!";
 
 
 	/*   int value{ 0 };

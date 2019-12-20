@@ -76,6 +76,8 @@ public:
 		sub_id = i_sub_id;
 	};
 	int getId() { return id; }
+	string getName() { return name; }
+	virtual string getPosition() = 0;
 };
 
 class Professor : public User {
@@ -87,6 +89,7 @@ public:
 	// getmaxnum_period, getmaxnum_day 이용해서 주의창 띄우기
 	// subject의 assign()을 이용
 	void edit_oh();
+	string getPosition() { return "Professor"; }
 };
 
 class Student : public User {
@@ -97,6 +100,7 @@ public:
 	void check_assignment() const; //subject 중에는 assignment가 존재하지 않을 수도 있음을 고려해야 함.
 	void check_oh(); //subject의 professor의 oh
 	void remove_subject(); //과목이 지워질때 id_subjects를 중 지워진 과목 코드를 삭제하는 함수
+	string getPosition() { return "Student"; }
 };
 
 
@@ -105,6 +109,7 @@ class Subject {
 	string sub_name;
 	list<Assignment*> assignments; //더 이상 assignment는 subject를 상속받지 않음.
 public:
+	Subject() {};
 	void assign(string id); //텍스트(2) //과제 객체를 만들어 admin에 파라미터로 주면 거기서 처리해줌
 };
 

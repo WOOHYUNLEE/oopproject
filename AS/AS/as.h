@@ -31,13 +31,15 @@ private:
 	map<int, Professor*> professors; // id, 교수 객체
 	map<int, Student*> students; // id, 학생 객체
 
-	void signup(int& position, int& id, string& name, list<string>& subjects);//객체를 생성하고 동적할당 하고 텍스트 저장(1)
+	template <typename T>
+	void signup(string& info, map<int, T*>);//텍스트 저장(1)
 //교수면 교수랑, 과목을 만들고 자기한테 있는 목록에 추가
-//학생이면, 입력한 과목이 있는 확인하고 학생을 만들고 과목 객체 목록에 자신을 추가하고 자신이 갖고 있는 목록에 과목을 추가한다.
-	void login(int position, int id, string name); //validation based on text(1)
+//학생이면, 입력한 과목이 있는 확인하고 학생을 만들
+	template <typename T>
+	void login(string& info, map<int, T*>); //validation based on text(1)
 
 public:
-	void helper(int& action, string& info, int& position); //input을 id, name, subject로 변환하고 signup이나 login을 부름
+	void helper(int& action, int& position, string& info); // signup이나 login을 부름
 	bool isconnected() { return connector != nullptr; }
 	User& getConnector() { return *connector; } //지금 접속중인 객체 반환
 
@@ -45,7 +47,7 @@ public:
 
 	string getToday() const; //오늘 날짜를 리턴하는 함수
 
-	void assign(Assignment*); //과제에 있는 과목코드로 과목을 찾고 그 안에 과제를 넣어줌
+	void assign(); //과제에 있는 과목코드로 과목을 찾고 그 안에 과제를 넣어줌
 
 	//assign 함수에서 구현하는 데에 필요한 3함수?
 	int getMaxNum_period(int date) const;
@@ -67,13 +69,11 @@ public:
 class User {
 	int id;
 	string name;
-	list<string> sub_id; //과목 고유 코드
 public:
 	User() {};
-	User(int& i_id, string& i_name, list<string>& i_sub_id) {
+	User(int& i_id, string& i_name) {
 		id = i_id;
 		name = i_name;
-		sub_id = i_sub_id;
 	};
 	int getId() { return id; }
 	string getName() { return name; }
@@ -81,10 +81,13 @@ public:
 };
 
 class Professor : public User {
+	pair<string, string> subject;
 	string oh;
 public:
-	Professor(int& id, string& name, list<string>& sub_id)
-		: User(id, name, sub_id) {}
+	Professor(int& id, string& name, pair<string, string>& i_subject)
+		: User(id, name) {
+		subject = i_subject;
+	}
 	void assign();
 	// getmaxnum_period, getmaxnum_day 이용해서 주의창 띄우기
 	// subject의 assign()을 이용
@@ -93,13 +96,15 @@ public:
 };
 
 class Student : public User {
+	list<string> id_sub; //과목 고유 코드
 public:
-	Student(int& id, string& name, list<string>& sub_id)
-		: User(id, name, sub_id) {}
+	Student(int& id, string& name, list<string>& i_id_sub)
+		: User(id, name) {
+		id_sub = i_id_sub;
+	}
 	void check_sujects() const;
 	void check_assignment() const; //subject 중에는 assignment가 존재하지 않을 수도 있음을 고려해야 함.
 	void check_oh(); //subject의 professor의 oh
-	void remove_subject(); //과목이 지워질때 id_subjects를 중 지워진 과목 코드를 삭제하는 함수
 	string getPosition() { return "Student"; }
 };
 
@@ -110,7 +115,7 @@ class Subject {
 	list<Assignment*> assignments; //더 이상 assignment는 subject를 상속받지 않음.
 public:
 	Subject() {};
-	void assign(string id); //텍스트(2) //과제 객체를 만들어 admin에 파라미터로 주면 거기서 처리해줌
+	void assign(string sub_id); //텍스트(2) //과제 객체를 만들고 자신한테 넣음
 };
 
 class Assignment {
@@ -118,3 +123,6 @@ class Assignment {
 	string contents;
 	int deadline; //범위 [1,365]
 };
+
+
+

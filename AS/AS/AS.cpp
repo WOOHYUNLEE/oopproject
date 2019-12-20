@@ -2,6 +2,7 @@
 
 #include "as.h"
 #include <cassert>
+#include <sstream>
 
 
 Admin& Admin::getInst() {
@@ -9,38 +10,50 @@ Admin& Admin::getInst() {
 	return instance;
 }
 
-void Admin::helper(int& action, string& info, int& position) {
-	int id =0;
-	string name="ㅎㅎ";
-	list<string> subjects;
-	subjects.push_back("d");
-	switch (action) { //과목 코드 문제, 번호로 받은 거를 목록에서 찾아서 과목명으로?
+//template <typename T>
+//void convert<T>(string& info, int& id, string& name, T& subject) {
+//
+//	stringstream ss(info);
+//	ss >> id;
+//	ss >> name;
+//}	
+
+void Admin::helper(int& action, int& position, string& info) {
+	switch (action) {
 	case 1:
-		//info를 id, name, subjects로 나눔
-		signup(position, id, name, subjects);
-		break;
+		switch (position) { //외부 데이터에 저장
+		case 1:
+			signup<Professor>(info, professors);
+			break;
+		case 2:
+			signup<Student>(info, students);
+			break;
+		}
 	case 2:
-		//info를 id, name으로 나눔
-		login(position, id, name);
-		break;
+		switch (position) {
+		case 1:
+			login<Professor>(info, professors);
+			break;
+		case 2:
+			login<Student>(info, students);
+			break;
+		}
 	}
 }
 
-void Admin::signup(int& position, int& id, string& name, list<string>& sub_id) {
-	switch (position) { //외부 데이터에 저장
-	case 1: {
-		//list의 크기가 1이여야 한다.
-		Professor* prof = new Professor(id, name, sub_id);
-		professors.insert(pair<int, Professor*>(id, prof));
-		break; }
-	case 2: {
-		Student* stud = new Student(id, name, sub_id);
-		students.insert(pair<int, Student*>(id, stud));
-		break; }
-	}
+template <typename T>
+void Admin::signup<T>(string& info, map<int, T*> arr) {
+	int id;
+	string name;
+
+	list<string> p_subject;
+	convert(info, id, name, p_subject);
+	T* user = new T(id, name, p_subject);
+	arr.insert(pair<int, Student*>(id, user));
 }
 
-void Admin::login(int position, int id, string name) {
+template <typename T>
+void Admin::login(string& info, map<int, T*> arr) {
 	try {
 		User* obj = nullptr;
 		switch (position) {
@@ -53,19 +66,20 @@ void Admin::login(int position, int id, string name) {
 		}
 		assert(obj->getName() == name);
 		connector = obj;
-		}
-	catch(...) {
+	}
+	catch (...) {
 		cout << "Error, Please chek your information";
 		return;
 	}
 }
+
 
 string Admin::getToday() const {
 
 	return "string";
 }
 
-void Admin::assign(Assignment*) {
+void Admin::assign() {
 }
 
 int Admin::getMaxNum_period(int date) const {
@@ -97,7 +111,7 @@ int main() {
 	Admin& kk = Admin::getInst();
 	cout << (admin == kk) << endl; //admin은 1개!
 
-	do{ //input validation 없음
+	do { //input validation 없음
 		int action;
 		int position;
 		string info;
@@ -115,11 +129,11 @@ int main() {
 		case 1: //가입
 			switch (position) {
 			case 1:
-				cout << "write your information(id / name / id_subject / subject)\n";
+				cout << "write your information(id name id_subject subject)\n";
 				getline(cin, info);
 				break;
 			case 2:
-				cout << "write your information(id / name / subject)\n";
+				cout << "write your information(id name subject)\n";
 				getline(cin, info);
 				break;
 			}
@@ -129,11 +143,11 @@ int main() {
 			getline(cin, info);
 			break;
 		}
-		admin.helper(action, info, position);
+		admin.helper(action, position, info);
 	} while (!admin.isconnected()); //가입 혹은 로그인하는 구간
 
 	User& connector = admin.getConnector();
-	cout<< connector.getPosition() << " " << connector.getName() << ", Welcome to the Scheduler!\n";
+	cout << connector.getPosition() << " " << connector.getName() << ", Welcome to the Scheduler!\n";
 
 
 	//cout << "professor " << 23 << ", welcome to the scheduler!\n";

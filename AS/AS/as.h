@@ -4,6 +4,8 @@
 #include <string>
 #include <list>
 #include <map>
+#include <cassert>
+#include <sstream>
 using namespace std;
 
 class Admin;
@@ -35,11 +37,11 @@ private:
 	User* connector = nullptr;
 
 	template <typename T>
-	void signup(string& info, map<int, T*>);//텍스트 저장(1)
+	void signup(string& info, map<int, T*>& arr);//텍스트 저장(1)
 //교수면 교수랑, 과목을 만들고 자기한테 있는 목록에 추가
 //학생이면, 입력한 과목이 있는 확인하고 학생을 만들
 	template <typename T>
-	void login(string& info, map<int, T*>); //validation based on text(1)
+	void login(string& info, map<int, T*>& arr); //validation based on text(1)
 
 public:
 	void helper(int& action, int& position, string& info); // signup이나 login을 부름
@@ -77,12 +79,12 @@ public:
 };
 
 class Professor : public User {
-	//string subject_name;
+	string p_subject;
 	string oh;
 public:
-	Professor(int& id, string& name, pair<string, string>& i_subject)
+	Professor(int& id, string& name, string& sub)
 		: User(id, name) {
-		//subject = i_subject;
+		p_subject = sub;
 	}
 
 	void assign();
@@ -99,10 +101,11 @@ public:
 };
 
 class Student : public User {
+	list<string> s_subjects;
 public:
-	Student(int& id, string& name, list<string>& i_id_sub)
+	Student(int& id, string& name, string& sub)
 		: User(id, name) {
-		//id_sub = i_id_sub;
+		//s_subjects = sub; @@ 바꿔야해
 	}
 	void check_sujects() const;
 	void check_assignment() const; //subject 중에는 assignment가 존재하지 않을 수도 있음을 고려해야 함.
@@ -115,6 +118,11 @@ class Assignment {
 	string a_name;
 	string contents;
 	int deadline; //범위 [1,365]
+public:
+	string getName() { return a_name; }
+	string getContents() { return contents; }
+	int getDeadline() { return deadline; }
+
 };
 
 //class Subject {
@@ -126,4 +134,47 @@ class Assignment {
 //};
 
 
+void convert_signup(string& info, int& id, string& name, string& subject) {
+	stringstream ss(info);
+	ss >> id;
+	ss >> name;
+	ss >> subject;
+} // convert 묶을 수는 없나?
+void convert_login(string& info, int& id, string& name) {
+	stringstream ss(info);
+	ss >> id;
+	ss >> name;
+}
+
+template <typename T>
+void Admin::signup(string& info, map<int, T*>& arr) {
+	int id;
+	string name;
+	string subject;
+	convert_signup(info, id, name, subject);
+	if (arr.find(id) != arr.end()) {
+		cout << "Your id already exists" << endl;
+		return;
+	}
+	T* user = new T(id, name, subject);
+	arr.insert(pair<int, T*>(id, user));
+	//if (typeid(T).name() == "class Professor") {
+	//	//cout << "Professor can take only 1 class";
+	//	}
+}
+
+template <typename T>
+void Admin::login(string& info, map<int, T*>& arr) {
+	int id;
+	string name;
+	convert_login(info, id, name);
+	try {
+		T* user = arr.at(id); //존재 여부에서 에러
+		assert(user->getName() == name); //같지 않을 때 에러
+		connector = user;
+	}
+	catch (...) {
+		cout << "Error, Please chek your information" << endl;
+	}
+}
 

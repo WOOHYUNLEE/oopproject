@@ -79,20 +79,6 @@ string Admin::getToday() const {
 	return "string";
 }
 
-void Admin::assign() {
-}
-
-int Admin::getMaxNum_period(int date) const {
-	return 0;
-}
-
-int Admin::getMaxNum_day(int date) const {
-	return 0;
-}
-
-int Admin::getNum_ass(int date) const {
-	return 0;
-}
 
 void Admin::remove_user() {
 }
@@ -108,8 +94,6 @@ void ifexit(int input) { if (input == 0) exit(-1); }
 
 int main() {
 	Admin& admin = Admin::getInst();
-	Admin& kk = Admin::getInst();
-	cout << (admin == kk) << endl; //admin은 1개!
 
 	do { //input validation 없음
 		int action;

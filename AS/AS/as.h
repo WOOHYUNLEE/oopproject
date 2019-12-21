@@ -6,8 +6,6 @@
 #include <map>
 using namespace std;
 
-void texteditor();
-
 class Admin;
 class User;
 class Student;
@@ -15,6 +13,14 @@ class Professor;
 class Subject;
 class Assignment;
 
+static void codetotext(map<int, Professor*>, map<int, Student*> students, map<string, list<Assignment*>>);
+
+static void texttocode(map<int, Professor*>, map<int, Student*> students, map<string, list<Assignment*>>);
+
+
+static map<int, Professor*> professors; // id, 교수 객체, text1
+static map<int, Student*> students; // id, 학생 객체, text2
+static map<string, list<Assignment*>> subjects; // 과목명 및 과제목록, text3
 
 class Admin final{
 private:
@@ -27,9 +33,6 @@ private:
 	void tomorrow(); //today 값을 1 증가시는(내일이 되는 함수)
 
 	User* connector = nullptr;
-	map<string, Subject*> subjects; // 과목 고유 코드 및 과목 객체
-	map<int, Professor*> professors; // id, 교수 객체
-	map<int, Student*> students; // id, 학생 객체
 
 	template <typename T>
 	void signup(string& info, map<int, T*>);//텍스트 저장(1)
@@ -47,13 +50,6 @@ public:
 
 	string getToday() const; //오늘 날짜를 리턴하는 함수
 
-	void assign(); //과제에 있는 과목코드로 과목을 찾고 그 안에 과제를 넣어줌
-
-	//assign 함수에서 구현하는 데에 필요한 3함수?
-	int getMaxNum_period(int date) const;
-	//수강하는 학생들 중에 date를 기준으로 며칠 이내에 과제 개수의 최댓값
-	int getMaxNum_day(int date) const; //학생들 중 같은 날에 마감인 다른 과제의 개수의 최댓값
-	int getNum_ass(int date) const; //date에 마감인 과제의 개수, getMaxNum 두 함수에서 사용해야 할 함수임.
 
 	void remove_user(); //User 객체를 지움(동적할당 해제, 텍스트(1)에서 삭제)
 	//교수를 지우면 과목도 지우고 학생들한테 있는 과목 코드에서도 삭제해야 함.
@@ -81,26 +77,32 @@ public:
 };
 
 class Professor : public User {
-	pair<string, string> subject;
+	//string subject_name;
 	string oh;
 public:
 	Professor(int& id, string& name, pair<string, string>& i_subject)
 		: User(id, name) {
-		subject = i_subject;
+		//subject = i_subject;
 	}
+
 	void assign();
 	// getmaxnum_period, getmaxnum_day 이용해서 주의창 띄우기
 	// subject의 assign()을 이용
+		//assign 함수에서 구현하는 데에 필요한 3함수?
+	int getMaxNum_period(int date) const;
+	//수강하는 학생들 중에 date를 기준으로 며칠 이내에 과제 개수의 최댓값
+	int getMaxNum_day(int date) const; //학생들 중 같은 날에 마감인 다른 과제의 개수의 최댓값
+	int getNum_ass(int date) const; //date에 마감인 과제의 개수, getMaxNum 두 함수에서 사용해야 할 함수임.
+
 	void edit_oh();
 	string getPosition() { return "Professor"; }
 };
 
 class Student : public User {
-	list<string> id_sub; //과목 고유 코드
 public:
 	Student(int& id, string& name, list<string>& i_id_sub)
 		: User(id, name) {
-		id_sub = i_id_sub;
+		//id_sub = i_id_sub;
 	}
 	void check_sujects() const;
 	void check_assignment() const; //subject 중에는 assignment가 존재하지 않을 수도 있음을 고려해야 함.
@@ -109,20 +111,19 @@ public:
 };
 
 
-class Subject {
-	string sub_id; //과목 고유 코드
-	string sub_name;
-	list<Assignment*> assignments; //더 이상 assignment는 subject를 상속받지 않음.
-public:
-	Subject() {};
-	void assign(string sub_id); //텍스트(2) //과제 객체를 만들고 자신한테 넣음
-};
-
 class Assignment {
 	string a_name;
 	string contents;
 	int deadline; //범위 [1,365]
 };
+
+//class Subject {
+//	string sub_name;
+//	list<Assignment*> assignments; //더 이상 assignment는 subject를 상속받지 않음.
+//public:
+//	Subject() {};
+//	void assign(string sub_id); //텍스트(2) //과제 객체를 만들고 자신한테 넣음
+//};
 
 
 

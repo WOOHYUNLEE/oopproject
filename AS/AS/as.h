@@ -27,40 +27,36 @@ static map<string, list<Assignment*>> subjects; // 과목명 및 과제목록, t
 
 class Admin final{
 private:
-	Admin() {}; // singleton 외부에서 관리자 객체 추가 생성을 막기 위해
+	Admin() { setCalendar(); }; // singleton 외부에서 관리자 객체 추가 생성을 막기 위해
 	~Admin() {};
 
-	int today = 1; //과제 지우거나 날짜 계산할 때 필요한 오늘 날짜
-	// 1월 1일=1,  12월 31일= 365
-	int in_to_date(string); //input을 날짜 데이터로 바꿔서 int(today)를 리턴하는 함수
-	void tomorrow(); //today 값을 1 증가시는(내일이 되는 함수)
-
+	template <typename T>
+	void signup(string& info, map<int, T*>& arr); //학생이 입력한 과목 있는지 확인
+	template <typename T>
+	void login(string& info, map<int, T*>& arr);
 	User* connector = nullptr;
 
-	template <typename T>
-	void signup(string& info, map<int, T*>& arr);//텍스트 저장(1)
-//교수면 교수랑, 과목을 만들고 자기한테 있는 목록에 추가
-//학생이면, 입력한 과목이 있는 확인하고 학생을 만들
-	template <typename T>
-	void login(string& info, map<int, T*>& arr); //validation based on text(1)
+	list<int> calendar;
+	void setCalendar(); //월별로 며칠까지 있는지 저장
+	int today = 1;
+	int input_to_date(string input); //input을 날짜 데이터로 바꿔서 int(today)를 리턴하는 함수
+	string date_to_output(int date);
+	void add_date();
 
 public:
-	static Admin& getInst(); // singleton 객체 만들거나 반환하는 함수
+	static Admin& getInst();
+	void helper(int& action, int& position, string& info);
+	bool isconnected() const;
+	User& getConnector() const;
 
-	void helper(int& action, int& position, string& info); // signup이나 login을 부름
-	bool isconnected() { return connector != nullptr; }
-	User& getConnector() { return *connector; } //지금 접속중인 객체 반환
+	int getToday() const;
+	string getDate(int date) const;
 
-	string getToday() const; //오늘 날짜를 리턴하는 함수
-
-
-	void remove_user(); //User 객체를 지움(동적할당 해제, 텍스트(1)에서 삭제)
-	//교수를 지우면 과목도 지우고 학생들한테 있는 과목 코드에서도 삭제해야 함.
-	//delete 쓰느라 힘들 거 같은데 힘들면 함수 빼도 될 듯
-
+	void remove_user();
 	void remove_assignment();//텍스트(2)
 	//늦게 제출할 수도 있으니 마감일으로부터 3일이 지나면 지우기
 	//날짜가 바뀌면 자동으로 실행
+	//1일이나 365에 마감일이면 범위 외 값은 고려하지 않기
 };
 
 class User {
@@ -105,27 +101,31 @@ class Student : public User {
 public:
 	Student(int& id, string& name, string& sub)
 		: User(id, name) {
-		//s_subjects = sub; @@ 바꿔야해
+		stringstream ss(sub);
+		string str;
+		while (ss >> str) {
+			s_subjects.push_back(str);
+		}
 	}
 	void check_sujects() const {
 		for (list<string>::const_iterator iter = s_subjects.begin(); iter != s_subjects.end(); iter++) {
 			cout << *iter << " ";
-		}
+		} cout << endl;
 	}
-	void check_assignment() const {
-		for (list<string>::const_iterator iter = s_subjects.begin(); iter != s_subjects.end(); iter++) {
-			list<assignment*> assignment = subjects.find(*iter)->second;
-			for (list<string>::iterator iter = assignment.begin(); iter != assignment.end(); iter++) {
-				cout << *iter.getname() << " " << *iter.getcontents() << " " << *iter.getdeadline << endl;
-			}
-		}
-	}
-	void check_oh(string subject) {
-		for (list<string>::const_iterator iter = professors.begin(); iter != professors.end(); iter++) {
-			if (subject == *iter.getsubjects()) professor p1 = *iter;
-			return *iter.getoh();
-		}
-	}
+	//void check_assignment() const {
+	//	for (list<string>::const_iterator iter = s_subjects.begin(); iter != s_subjects.end(); iter++) {
+	//		list<assignment*> assignment = subjects.find(*iter)->second;
+	//		for (list<string>::iterator iter = assignment.begin(); iter != assignment.end(); iter++) {
+	//			cout << *iter.getname() << " " << *iter.getcontents() << " " << *iter.getdeadline << endl;
+	//		}
+	//	}
+	//}
+	//void check_oh(string subject) {
+	//	for (list<string>::const_iterator iter = professors.begin(); iter != professors.end(); iter++) {
+	//		if (subject == *iter.getsubjects()) professor p1 = *iter;
+	//		return *iter.getoh();
+	//	}
+	//}
 	string getPosition() { return "Student"; }
 };
 

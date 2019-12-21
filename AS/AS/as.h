@@ -6,6 +6,7 @@
 #include <map>
 #include <cassert>
 #include <sstream>
+#include <algorithm>
 using namespace std;
 
 class Admin;
@@ -31,7 +32,7 @@ private:
 
 	int today = 1; //과제 지우거나 날짜 계산할 때 필요한 오늘 날짜
 	// 1월 1일=1,  12월 31일= 365
-	int in_to_today(); //input을 날짜 데이터로 바꿔서 int(today)를 리턴하는 함수
+	int in_to_date(string); //input을 날짜 데이터로 바꿔서 int(today)를 리턴하는 함수
 	void tomorrow(); //today 값을 1 증가시는(내일이 되는 함수)
 
 	User* connector = nullptr;
@@ -44,11 +45,11 @@ private:
 	void login(string& info, map<int, T*>& arr); //validation based on text(1)
 
 public:
+	static Admin& getInst(); // singleton 객체 만들거나 반환하는 함수
+
 	void helper(int& action, int& position, string& info); // signup이나 login을 부름
 	bool isconnected() { return connector != nullptr; }
 	User& getConnector() { return *connector; } //지금 접속중인 객체 반환
-
-	static Admin& getInst(); // singleton 객체 만들거나 반환하는 함수
 
 	string getToday() const; //오늘 날짜를 리턴하는 함수
 
@@ -60,8 +61,6 @@ public:
 	void remove_assignment();//텍스트(2)
 	//늦게 제출할 수도 있으니 마감일으로부터 3일이 지나면 지우기
 	//날짜가 바뀌면 자동으로 실행
-
-	bool operator==(const Admin& other); //must be removed
 };
 
 class User {
@@ -107,9 +106,19 @@ public:
 		: User(id, name) {
 		//s_subjects = sub; @@ 바꿔야해
 	}
-	void check_sujects() const;
-	void check_assignment() const; //subject 중에는 assignment가 존재하지 않을 수도 있음을 고려해야 함.
-	void check_oh(); //subject의 professor의 oh
+	void check_sujects() const {
+		for (list<string>::const_iterator iter = s_subjects.begin(); iter != s_subjects.end(); iter++) {
+			cout << *iter << " ";
+		}
+	}
+	void check_assignment();
+	void check_oh();
+	//void check_oh(string subject) {
+	//	string getsub = for_each(professors.begin(), professors.end(), Professor.getsubject) {
+	//		if (getsub == subject) {
+	//			cout << Professor.getOH() << endl;
+	//		}
+	//	}
 	string getPosition() { return "Student"; }
 };
 

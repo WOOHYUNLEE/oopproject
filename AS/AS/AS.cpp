@@ -86,44 +86,46 @@ int main() {
 
 	User& connector = admin.getConnector();
 	cout << connector.getPosition() << " " << connector.getName() << ", Welcome to the Scheduler!\n";
-	cout << "What do you want to do?\n";
 
 	while (connector.getPosition() == "Professor") {
 		Professor& p_connector = dynamic_cast<Professor&>(connector);
 		int action;
+		cout << "What do you want to do?\n";
 		cout << "1. add assignment \n2. post office hour \n3. check students' assignment \n0. exit\n";
 		cin >> action;
 		ifexit(action);
 
-		switch (action) {
-		case 1: // 과제 부여
-			p_connector.assign();
-			break;
-		case 2: // oh 수정
-			p_connector.edit_oh();
-			break;
-		case 3: //학생들 과제 확인
-			p_connector.edit_oh();
-			break;
+		//switch (action) {
+		//case 1: // 과제 부여
+		//	p_connector.assign();
+		//	break;
+		//case 2: // oh 수정
+		//	p_connector.edit_oh();
+		//	break;
+		//case 3: //학생들 과제 확인
+		//	p_connector.check_assignment();
+		//	break;
 		}
 
 		while (connector.getPosition() == "Student") {
 			Student& s_connector = dynamic_cast<Student&>(connector);
 			int action;
+			cout << "What do you want to do?\n";
 			cout << "1. Check my subjects \n2. Check my assignment list \n3. Check Professors' office hour\n0. exit\n";
 			cin >> action;
 			ifexit(action);
 
-			//switch (action) {
-			//case 1: // 과목 확인
-			//	s_connector.check_sujects();
-			//	break;
-			//case 2: // 과제 확인
+			switch (action) {
+			case 1: // 과목 확인
+				s_connector.check_sujects();
+				//cout << "check suject!ASAS";
+				break;
+			case 2: // 과제 확인
 			//	s_connector.check_assignment();
-			//	break;
-			//case 3: // oh 확인
-			//	s_connector.check_oh();
-			//	break;
+				break;
+			case 3: // oh 확인
+			//	s_connector.check_oh(string);
+				break;
 			}
 		}
 	}

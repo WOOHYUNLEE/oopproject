@@ -96,6 +96,7 @@ public:
 	int getNum_ass(int date) const; //date에 마감인 과제의 개수, getMaxNum 두 함수에서 사용해야 할 함수임.
 
 	void edit_oh();
+	void check_assignment();
 	string getPosition() { return "Professor"; }
 };
 
@@ -111,14 +112,20 @@ public:
 			cout << *iter << " ";
 		}
 	}
-	void check_assignment();
-	void check_oh();
-	//void check_oh(string subject) {
-	//	string getsub = for_each(professors.begin(), professors.end(), Professor.getsubject) {
-	//		if (getsub == subject) {
-	//			cout << Professor.getOH() << endl;
-	//		}
-	//	}
+	void check_assignment() const {
+		for (list<string>::const_iterator iter = s_subjects.begin(); iter != s_subjects.end(); iter++) {
+			list<assignment*> assignment = subjects.find(*iter)->second;
+			for (list<string>::iterator iter = assignment.begin(); iter != assignment.end(); iter++) {
+				cout << *iter.getname() << " " << *iter.getcontents() << " " << *iter.getdeadline << endl;
+			}
+		}
+	}
+	void check_oh(string subject) {
+		for (list<string>::const_iterator iter = professors.begin(); iter != professors.end(); iter++) {
+			if (subject == *iter.getsubjects()) professor p1 = *iter;
+			return *iter.getoh();
+		}
+	}
 	string getPosition() { return "Student"; }
 };
 

@@ -7,6 +7,7 @@
 #include <cassert>
 #include <sstream>
 #include <algorithm>
+#include <iterator>
 using namespace std;
 
 class Admin;
@@ -38,25 +39,19 @@ private:
 
 	list<int> calendar;
 	void setCalendar(); //월별로 며칠까지 있는지 저장
-	int today = 1;
-	int input_to_date(string input); //input을 날짜 데이터로 바꿔서 int(today)를 리턴하는 함수
-	string date_to_output(int date);
-	void add_date();
 
 public:
 	static Admin& getInst();
 	void helper(int& action, int& position, string& info);
 	bool isconnected() const;
 	User& getConnector() const;
+	void ifexit(int input);
 
-	int getToday() const;
-	string getDate(int date) const;
+	void getToday() const;
+	int input_to_date(string input); //1231을 365로 바꾸는 함수
+	string date_to_output(int date); //365를 1231로 바꾸는 함수
 
-	void remove_user();
-	void remove_assignment();//텍스트(2)
-	//늦게 제출할 수도 있으니 마감일으로부터 3일이 지나면 지우기
-	//날짜가 바뀌면 자동으로 실행
-	//1일이나 365에 마감일이면 범위 외 값은 고려하지 않기
+	void remove_assignment();
 };
 
 class User {
@@ -68,28 +63,30 @@ public:
 		id = i_id;
 		name = i_name;
 	};
-	int getId() { return id; }
+	int getId() { return id; } //어디에 쓰임?
 	string getName() { return name; }
 	virtual string getPosition() = 0;
 };
 
 class Professor : public User {
 	string p_subject;
-	string oh;
+	string p_oh;
 public:
 	Professor(int& id, string& name, string& sub)
 		: User(id, name) {
 		p_subject = sub;
 	}
+	Professor(int& id, string& name, string& sub, string& oh)
+		: Professor(id, name, sub) {
+		p_oh = oh;
+	}
 
-	void assign();
-	// getmaxnum_period, getmaxnum_day 이용해서 주의창 띄우기
-	// subject의 assign()을 이용
-		//assign 함수에서 구현하는 데에 필요한 3함수?
-	int getMaxNum_period(int date) const;
-	//수강하는 학생들 중에 date를 기준으로 며칠 이내에 과제 개수의 최댓값
-	int getMaxNum_day(int date) const; //학생들 중 같은 날에 마감인 다른 과제의 개수의 최댓값
-	int getNum_ass(int date) const; //date에 마감인 과제의 개수, getMaxNum 두 함수에서 사용해야 할 함수임.
+	void assign(Admin & ad);
+	int getMaxNum_period(string date, Admin& ad) const;
+	string getbefore_period(string date) const;
+	int getMaxNum_day(string date) const; 
+	void warning(string date, Admin& ad) const;
+	void save(Assignment& ass);
 
 	void edit_oh();
 	void check_assignment();
@@ -107,37 +104,28 @@ public:
 			s_subjects.push_back(str);
 		}
 	}
-	void check_sujects() const {
-		for (list<string>::const_iterator iter = s_subjects.begin(); iter != s_subjects.end(); iter++) {
-			cout << *iter << " ";
-		} cout << endl;
-	}
-	//void check_assignment() const {
-	//	for (list<string>::const_iterator iter = s_subjects.begin(); iter != s_subjects.end(); iter++) {
-	//		list<assignment*> assignment = subjects.find(*iter)->second;
-	//		for (list<string>::iterator iter = assignment.begin(); iter != assignment.end(); iter++) {
-	//			cout << *iter.getname() << " " << *iter.getcontents() << " " << *iter.getdeadline << endl;
-	//		}
-	//	}
-	//}
-	//void check_oh(string subject) {
-	//	for (list<string>::const_iterator iter = professors.begin(); iter != professors.end(); iter++) {
-	//		if (subject == *iter.getsubjects()) professor p1 = *iter;
-	//		return *iter.getoh();
-	//	}
-	//}
+	void check_sujects() const;
+	void check_assignment() const;
+	void check_oh(string subject) const;
 	string getPosition() { return "Student"; }
 };
 
 
 class Assignment {
 	string a_name;
+	string deadline;
 	string contents;
-	int deadline; //범위 [1,365]
+
 public:
-	string getName() { return a_name; }
-	string getContents() { return contents; }
-	int getDeadline() { return deadline; }
+	Assignment() {};
+	Assignment(string na, string dead, string con) {
+		a_name = na;
+		deadline = dead;
+		contents = con;
+	}
+	//string getName() { return a_name; }
+	//string getContents() { return contents; }
+	string getDeadline() { return deadline; }
 
 };
 

@@ -152,6 +152,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AS.cpp" />
+    <ClCompile Include="user.cpp" />
+    <ClCompile Include="admin.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="as.h" />

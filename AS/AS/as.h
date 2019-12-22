@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef _HEADER_
+#define _HEADER_
 
 #include <iostream>
 #include <string>
@@ -8,6 +10,7 @@
 #include <sstream>
 #include <algorithm>
 #include <iterator>
+
 using namespace std;
 
 class Admin;
@@ -17,9 +20,9 @@ class Professor;
 class Subject;
 class Assignment;
 
-static void codetotext(map<int, Professor*>, map<int, Student*> students, map<string, list<Assignment*>>);
+static void codetotext();
 
-static void texttocode(map<int, Professor*>, map<int, Student*> students, map<string, list<Assignment*>>);
+static void texttocode();
 
 
 static map<int, Professor*> professors; // id, 교수 객체, text1
@@ -137,18 +140,8 @@ public:
 //	void assign(string sub_id); //텍스트(2) //과제 객체를 만들고 자신한테 넣음
 //};
 
-
-void convert_signup(string& info, int& id, string& name, string& subject) {
-	stringstream ss(info);
-	ss >> id;
-	ss >> name;
-	ss >> subject;
-} // convert 묶을 수는 없나?
-void convert_login(string& info, int& id, string& name) {
-	stringstream ss(info);
-	ss >> id;
-	ss >> name;
-}
+void convert_signup(string& info, int& id, string& name, string& subject);
+void convert_login(string& info, int& id, string& name);
 
 template <typename T>
 void Admin::signup(string& info, map<int, T*>& arr) {
@@ -182,3 +175,5 @@ void Admin::login(string& info, map<int, T*>& arr) {
 	}
 }
 
+
+#endif // !_HEADER_

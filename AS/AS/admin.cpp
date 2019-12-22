@@ -3,6 +3,19 @@
 
 //가입 및 로그인 관련
 //signup, login은 헤더에 존재
+
+void convert_signup(string& info, int& id, string& name, string& subject) {
+	stringstream ss(info);
+	ss >> id;
+	ss >> name;
+	ss >> subject;
+} // convert 묶을 수는 없나?
+void convert_login(string& info, int& id, string& name) {
+	stringstream ss(info);
+	ss >> id;
+	ss >> name;
+}
+
 Admin& Admin::getInst() {
 	static Admin instance;
 	return instance;

@@ -1,7 +1,4 @@
 ﻿#include "as.h"
-#include "user.cpp"
-#include "admin.cpp"
-
 
 //static void texttocode() {
 //	ifstream txt1("text1.txt", ios::in);

@@ -1,6 +1,7 @@
 #include "as.h"
 #include <time.h>
 
+
 //가입 및 로그인 관련
 //signup, login은 헤더에 존재
 
@@ -39,11 +40,11 @@ void Admin::helper(int& action, int& position, string& info) {
 	case 2:
 		switch (position) {
 		case 1:
-			cout << "p size:" << professors.size();
+			cout << "p size:" << professors.size() << endl;
 			login<Professor>(info, professors);
 			break;
 		case 2:
-			cout << "s size:" << students.size();
+			cout << "s size:" << students.size() << endl;
 			login<Student>(info, students);
 			break;
 		}
@@ -112,6 +113,7 @@ void Admin::remove_assignment() {
 
 void Admin::ifexit(int input) {
 	if (input == 0) {
+		codetotext();
 		getToday();
 		remove_assignment();
 		exit(-1);
@@ -137,11 +139,11 @@ void Admin::showStudents() {
 }
 void Admin::showSubjects() {
 	cout << "@SUBJECT" << endl;
-	map<string, list<Assignment*>>::const_iterator it;
+	map<string, list<std::shared_ptr<Assignment>>>::const_iterator it;
 	for (it = subjects.begin(); it != subjects.end(); it++) {
 		cout << "sub_name :" << it->first << " //";
-		list<Assignment*> ob = it->second;
-		for (list <Assignment*>::const_iterator itt = ob.begin(); itt != ob.end(); itt++)
+		list<std::shared_ptr<Assignment>> ob = it->second;
+		for (list<std::shared_ptr<Assignment>>::const_iterator itt = ob.begin(); itt != ob.end(); itt++)
 			cout << " 이름, 마감일, 내용 :" << (*(*itt)).getA_name() << "/" << (*(*itt)).getDeadline() << "/" << (*(*itt)).getContents() << endl;
 	}cout << endl;
 }

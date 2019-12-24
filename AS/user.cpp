@@ -93,10 +93,10 @@ string Professor::getbefore_period(string date) const { //주어진 날짜의 3�
 
 int Professor::getMaxNum_day(string date) const { //학생들 중 같은 날에 마감인 다른 과제의 개수의 최댓값 
 	int stunum{ 0 };
-	map<string, list<Assignment*>>::iterator iter;
+	map<string, list<std::shared_ptr<Assignment>>>::iterator iter;
 	for (iter = subjects.begin(); iter != subjects.end(); ++iter) {// iterator를 이용해 map 전체 확인
-		list<Assignment*> L = (*iter).second; // 쉽게 보기 위해 list 변수를 만듦
-		list<Assignment*>::iterator it;
+		list<std::shared_ptr<Assignment>> L = (*iter).second; // 쉽게 보기 위해 list 변수를 만듦
+		list<std::shared_ptr<Assignment>>::iterator it;
 		for (it = L.begin(); it != L.end(); it++) {
 			if ((*(*it)).getDeadline() == date)
 				stunum += 1;
@@ -123,14 +123,15 @@ void Professor::warning(string date, Admin& ad) const { // b는 deadline을 인�
 }
 
 void Professor::save(Assignment& ass) {
-	if (subjects.find(p_subject) == subjects.end()) { // p_subject에 대한 key 가 없다면
-		list<Assignment*> L;
-		L.push_back(&ass);
-		subjects[p_subject] = L;
-	}
-	else { // p_subject에 대한 key 가 있다면
-		subjects[p_subject].push_back(&ass);
-	}
+	subjects[p_subject].push_back(std::make_shared<Assignment>(ass));
+	//if (subjects.find(p_subject) == subjects.end()) { // p_subject에 대한 key 가 없다면
+	//	list<std::shared_ptr<Assignment>> L;
+	//	L.push_back(&ass);
+	//	subjects[p_subject] = L;
+	//}
+	//else { // p_subject에 대한 key 가 있다면
+	//	subjects[p_subject].push_back(&ass);
+	//}
 }
 
 //edit.oh needed;
@@ -141,13 +142,21 @@ void Professor::check_assignment() const {
 	else {
 		cout << "Your Assignment list\n";
 		int n{ 1 };
-		list<Assignment*>::iterator it;
+		list<std::shared_ptr<Assignment>>::iterator it;
 		for (it = (subjects[p_subject]).begin(); it != (subjects[p_subject]).end(); it++) {
-			cout << n << ". " << (*(*it)).getA_name() << endl;
+			cout << n << ". " << ((*(*it)).getA_name()) << endl;
 			n += 1;
 		}
 	}
 }
+void Professor::edit_oh() {
+	string office;
+	cout << "Please write an information of your office hour.\n";
+	cin >> office;
+	p_oh = office;
+};
+
+
 
 /////////////////////////////// Student
 
@@ -168,7 +177,7 @@ void Student::check_assignment() const {
 		cout << setw(50) << left << "과제 내용" << endl;
 		int n{ 1 };
 		for (list<string>::const_iterator iter = s_subjects.begin(); iter != s_subjects.end(); iter++) {
-			list<Assignment*>::iterator it;
+			list<std::shared_ptr<Assignment>>::iterator it;
 			for (it = (subjects[(*iter)]).begin(); it != (subjects[(*iter)]).end(); it++) {
 				cout << " " << n << ". " << setw(20) << left << (*iter) << " | "; // 과목명을 정렬해서 표시 (예 : 1. 객체지향프로그래밍), |는 구분선임
 				cout << setw(10) << left << (*(*it)).getA_name() << " | ";
@@ -181,13 +190,6 @@ void Student::check_assignment() const {
 			cout << "There is no assignment in your subjects.\n";
 	}
 }
-
-void Professor::edit_oh() {
-	string office;
-	cout << "Please write an information of your office hour.\n";
-	cin >> office;
-	p_oh = office;
-};
 
 
 void Student::check_oh(string subject) const {

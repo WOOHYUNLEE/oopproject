@@ -11,6 +11,7 @@
 #include <iterator>
 #include <fstream>
 #include <iomanip>
+#include <memory>
 
 using namespace std;
 
@@ -21,13 +22,9 @@ class Professor;
 class Subject;
 class Assignment;
 
-static void codetotext();
-
-static void texttocode();
-
-static map<int, Professor*> professors; // id, 교수 객체, text1
-static map<int, Student*> students; // id, 학생 객체, text2
-static map<string, list<Assignment*>> subjects; // 과목명 및 과제목록, text3
+extern map<int, Professor*> professors; // id, 교수 객체, text1
+extern map<int, Student*> students; // id, 학생 객체, text2
+extern map<string, list<std::shared_ptr<Assignment>>> subjects; // 과목명 및 과제목록, text3
 
 class Admin final {
 private:
@@ -81,6 +78,8 @@ class Professor : public User {
 	string p_subject;
 	string p_oh;
 public:
+	Professor()
+		: User() {}
 	Professor(int& id, string& name, string& sub)
 		: User(id, name) {
 		p_subject = sub;
@@ -109,6 +108,8 @@ public:
 class Student : public User {
 	list<string> s_subjects;
 public:
+	Student()
+		:User() {}
 	Student(int& id, string& name, string& sub)
 		: User(id, name) {
 		stringstream ss(sub);
@@ -130,7 +131,6 @@ class Assignment {
 	string a_name;
 	string deadline;
 	string contents;
-
 public:
 	Assignment() {};
 	Assignment(string na, string dead, string con) {
@@ -141,14 +141,13 @@ public:
 	string getA_name() { return a_name; }
 	string getContents() { return contents; }
 	string getDeadline() { return deadline; }
-
 };
 
 
 
 //class Subject {
 //	string sub_name;
-//	list<Assignment*> assignments; //더 이상 assignment는 subject를 상속받지 않음.
+//	list<std::shared_ptr<Assignment>> assignments; //더 이상 assignment는 subject를 상속받지 않음.
 //public:
 //	Subject() {};
 //	void assign(string sub_id); //텍스트(2) //과제 객체를 만들고 자신한테 넣음
@@ -189,6 +188,8 @@ void Admin::login(string& info, map<int, T*>& arr) {
 		cout << "Error, Please chek your information" << endl;
 	}
 }
+extern void texttocode();
+extern void codetotext();
 
 #endif // !_HEADER_
 

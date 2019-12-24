@@ -6,7 +6,6 @@
 #include <string>
 #include <list>
 #include <map>
-#include <cassert>
 #include <sstream>
 #include <algorithm>
 #include <iterator>
@@ -24,12 +23,11 @@ static void codetotext();
 
 static void texttocode();
 
-
 static map<int, Professor*> professors; // id, 교수 객체, text1
 static map<int, Student*> students; // id, 학생 객체, text2
 static map<string, list<Assignment*>> subjects; // 과목명 및 과제목록, text3
 
-class Admin final{
+class Admin final {
 private:
 	Admin() { setCalendar(); }; // singleton 외부에서 관리자 객체 추가 생성을 막기 위해
 	~Admin() {};
@@ -44,10 +42,12 @@ private:
 	void setCalendar(); //월별로 며칠까지 있는지 저장
 
 public:
+
 	static Admin& getInst();
 	void helper(int& action, int& position, string& info);
 	bool isconnected() const;
 	User& getConnector() const;
+	void setConnector(User* ptr = nullptr);
 	void ifexit(int input);
 
 	void getToday() const;
@@ -55,6 +55,10 @@ public:
 	string date_to_output(int date); //365를 1231로 바꾸는 함수
 
 	void remove_assignment();
+
+	void showProfessors();
+	void showStudents();
+	void showSubjects();
 };
 
 class User {
@@ -93,6 +97,8 @@ public:
 
 	void edit_oh();
 	void check_assignment();
+	string getP_subject() { return p_subject; }
+	string getP_oh() { return p_oh; }
 	string getPosition() { return "Professor"; }
 };
 
@@ -110,6 +116,7 @@ public:
 	void check_sujects() const;
 	void check_assignment() const;
 	void check_oh(string subject) const;
+	list<string> getS_subjects() const { return s_subjects; }
 	string getPosition() { return "Student"; }
 };
 
@@ -126,11 +133,13 @@ public:
 		deadline = dead;
 		contents = con;
 	}
-	//string getName() { return a_name; }
-	//string getContents() { return contents; }
+	string getA_name() { return a_name; }
+	string getContents() { return contents; }
 	string getDeadline() { return deadline; }
 
 };
+
+
 
 //class Subject {
 //	string sub_name;
@@ -143,6 +152,7 @@ public:
 void convert_signup(string& info, int& id, string& name, string& subject);
 void convert_login(string& info, int& id, string& name);
 
+
 template <typename T>
 void Admin::signup(string& info, map<int, T*>& arr) {
 	int id;
@@ -152,7 +162,7 @@ void Admin::signup(string& info, map<int, T*>& arr) {
 	if (arr.find(id) != arr.end()) {
 		cout << "Your id already exists" << endl;
 		return;
-	}
+	} 
 	T* user = new T(id, name, subject);
 	arr.insert(pair<int, T*>(id, user));
 	//if (typeid(T).name() == "class Professor") {
@@ -167,13 +177,13 @@ void Admin::login(string& info, map<int, T*>& arr) {
 	convert_login(info, id, name);
 	try {
 		T* user = arr.at(id); //존재 여부에서 에러
-		assert(user->getName() == name); //같지 않을 때 에러
-		connector = user;
+		if (user->getName() != name) throw 1; //같지 않을 때 에러
+		setConnector(user);
 	}
 	catch (...) {
 		cout << "Error, Please chek your information" << endl;
 	}
 }
 
-
 #endif // !_HEADER_
+

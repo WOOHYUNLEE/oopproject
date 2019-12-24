@@ -1,14 +1,16 @@
 #include "as.h"
+#include <iomanip>
 
 void Professor::assign(Admin& ad) {
 	string a_name;
 	string deadline;
 	string contents;
 	int n;
+	cin.ignore();
 	cout << "Please write a title of Assignment.(please enter no more than 10 characters)\n";//<< "Your subject is subject_name"
-	cin >> a_name; // 과제 제목을 받음
+	getline(cin, a_name); // 과제 제목을 받음
 	cout << "Please write the contents of Assignment.(please enter no more than 50 characters)\n";
-	cin >> contents; // 과제 내용을 받음
+	getline(cin, contents); // 과제 내용을 받음
 	do {
 		n = 0;
 		cout << "Please write the deadline of Assignment.(please enter with 0000 format)\n";
@@ -131,8 +133,23 @@ void Professor::save(Assignment& ass) {
 	}
 }
 
+//edit.oh needed;
 
-///////////////////////////////
+void Professor::check_assignment() {
+	if (subjects.find(p_subject) == subjects.end()) // 아직 과제가 하나도 없다면
+		cout << "There is no assignment in your subject.\n";
+	else {
+		cout << "Your Assignment list\n";
+		int n{ 1 };
+		list<Assignment*>::iterator it;
+		for (it = (subjects[p_subject]).begin(); it != (subjects[p_subject]).end(); it++) {
+			cout << n << ". " << (*(*it)).getA_name() << endl;
+			n += 1;
+		}
+	}
+}
+
+/////////////////////////////// Student
 
 void Student::check_sujects() const {
 	for (list<string>::const_iterator iter = s_subjects.begin(); iter != s_subjects.end(); iter++) {
@@ -140,15 +157,25 @@ void Student::check_sujects() const {
 	} cout << endl;
 }
 
-//에러 뜸..
-//void Student::check_assignment() const {
-//	for (list<string>::const_iterator iter = s_subjects.begin(); iter != s_subjects.end(); iter++) {
-//		list<Assignment*> assignment = subjects.find(*iter)->second;
-//		for (list<string>::iterator iter = assignment.begin(); iter != assignment.end(); iter++) {
-//			cout << *iter.getName() << " " << *iter.getContents() << " " << *iter.getDeadline << endl;
-//		}
-//	}
-//}
+void Student::check_assignment() const {
+	if (s_subjects.empty()) // 과목이 없는 경우
+		cout << "There is no subject.\n"; //중간에 과목 추가하는 기능은 없음?
+	else {
+		cout << "Your Assignment list\n";
+		int n{ 1 };
+		for (list<string>::const_iterator iter = s_subjects.begin(); iter != s_subjects.end(); iter++) {
+			list<Assignment*>::iterator it;
+			for (it = (subjects[(*iter)]).begin(); it != (subjects[(*iter)]).end(); it++) {
+				cout << n << ". " << setw(20) << left << (*iter) << " | "; // 과목명을 정렬해서 표시 (예 : 1. 객체지향프로그래밍), |는 구분선임
+				cout << setw(10) << left << (*(*it)).getA_name() << " | ";
+				cout << setw(5) << left << (*(*it)).getDeadline() << " | ";
+				cout << setw(50) << left << (*(*it)).getContents() << endl;
+			}
+		}
+		if (n == 1)  // 과목은 있지만 과제는 없음
+			cout << "There is no assignment in your subjects.\n";
+	}
+}
 
 //자기가 듣는 과목 중 어떤 과목을 확인할지 고르는 작업 필요
 //void Student::check_oh(string subject) {

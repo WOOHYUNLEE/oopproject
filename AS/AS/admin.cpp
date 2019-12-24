@@ -6,9 +6,12 @@
 
 void convert_signup(string& info, int& id, string& name, string& subject) {
 	stringstream ss(info);
+	string sub;
 	ss >> id;
 	ss >> name;
-	ss >> subject;
+	while (ss >> sub) {
+		subject += sub + " ";
+	}
 } // convert 묶을 수는 없나?
 void convert_login(string& info, int& id, string& name) {
 	stringstream ss(info);
@@ -36,9 +39,11 @@ void Admin::helper(int& action, int& position, string& info) {
 	case 2:
 		switch (position) {
 		case 1:
+			cout << "p size:" << professors.size();
 			login<Professor>(info, professors);
 			break;
 		case 2:
+			cout << "s size:" << students.size();
 			login<Student>(info, students);
 			break;
 		}
@@ -49,6 +54,9 @@ void Admin::helper(int& action, int& position, string& info) {
 bool Admin::isconnected() const { return connector != nullptr; }
 
 User& Admin::getConnector() const { return *connector; }
+
+void Admin::setConnector(User* ptr) { connector = ptr; }
+
 
 //날짜 관련
 void Admin::setCalendar() {
@@ -108,4 +116,32 @@ void Admin::ifexit(int input) {
 		remove_assignment();
 		exit(-1);
 	}
+}
+
+void Admin::showProfessors() {
+	cout << "@PROFESSOR" << endl;
+	map<int, Professor*>::const_iterator it;
+	for (it = professors.begin(); it != professors.end(); it++) {
+		Professor* ob = it->second;
+		cout << "id :" << it->first << "// 이름, 과목, OH :" << ob->getName() << "/" << ob->getP_subject() << "/" << ob->getP_oh() << endl;
+	}
+}
+void Admin::showStudents() {
+	cout << "@STUDENT" << endl;
+	map<int, Student*>::const_iterator it;
+	for (it = students.begin(); it != students.end(); it++) {
+		Student* ob = it->second;
+		cout << "id :" << it->first << "// 이름, 과목 :" << ob->getName() << "/";
+		ob->check_sujects();
+	}
+}
+void Admin::showSubjects() {
+	cout << "@SUBJECT" << endl;
+	map<string, list<Assignment*>>::const_iterator it;
+	for (it = subjects.begin(); it != subjects.end(); it++) {
+		cout << "sub_name :" << it->first << " //";
+		list<Assignment*> ob = it->second;
+		for (list <Assignment*>::const_iterator itt = ob.begin(); itt != ob.end(); itt++)
+			cout << " 이름, 마감일, 내용 :" << (*(*itt)).getA_name() << "/" << (*(*itt)).getDeadline() << "/" << (*(*itt)).getContents() << endl;
+	}cout << endl;
 }

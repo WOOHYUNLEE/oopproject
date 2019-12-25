@@ -1,10 +1,9 @@
 #include "as.h"
 #include <time.h>
 
-//가입 및 로그인 관련
-//signup, login은 헤더에 존재
 
-void convert_signup(string& info, int& id, string& name, string& subject) {
+//가입 및 로그인 관련
+void Admin::convert_signup(string& info, int& id, string& name, string& subject) {
 	stringstream ss(info);
 	string sub;
 	ss >> id;
@@ -12,19 +11,20 @@ void convert_signup(string& info, int& id, string& name, string& subject) {
 	while (ss >> sub) {
 		subject += sub + " ";
 	}
-} // convert 묶을 수는 없나?
-void convert_login(string& info, int& id, string& name) {
+	subject.erase(subject.end() - 1);
+}
+void Admin::convert_login(string& info, int& id, string& name) {
 	stringstream ss(info);
 	ss >> id;
 	ss >> name;
 }
 
-Admin& Admin::getInst() {
+Admin& Admin::getInst() { //Admin 객체 생성 및 반환
 	static Admin instance;
 	return instance;
 }
 
-void Admin::helper(int& action, int& position, string& info) {
+void Admin::helper(int& action, int& position, string& info) { //가입 혹은 로그인
 	switch (action) {
 	case 1:
 		switch (position) {
@@ -39,11 +39,9 @@ void Admin::helper(int& action, int& position, string& info) {
 	case 2:
 		switch (position) {
 		case 1:
-			cout << "p size:" << professors.size();
 			login<Professor>(info, professors);
 			break;
 		case 2:
-			cout << "s size:" << students.size();
 			login<Student>(info, students);
 			break;
 		}
@@ -55,11 +53,10 @@ bool Admin::isconnected() const { return connector != nullptr; }
 
 User& Admin::getConnector() const { return *connector; }
 
-void Admin::setConnector(User* ptr) { connector = ptr; }
-
+void Admin::setConnector(User* ptr) { connector = ptr; } 
 
 //날짜 관련
-void Admin::setCalendar() {
+void Admin::setCalendar() { //월별로 며칠까지 있는지 저장
 	for (int month = 1; month < 13; month++)
 		switch (month) {
 		case 2:
@@ -74,7 +71,7 @@ void Admin::setCalendar() {
 		}
 }
 
-int Admin::input_to_date(string input) { //validation
+int Admin::input_to_date(string input) {
 	int month = stoi(input.substr(0, 2));
 	int date = stoi(input.substr(2, 2));
 	int result = 0;
@@ -84,7 +81,7 @@ int Admin::input_to_date(string input) { //validation
 	return result + date;
 }
 
-string Admin::date_to_output(int date) { //validation
+string Admin::date_to_output(int date) {
 	int month = 0;
 	for (list<int>::iterator iter = calendar.begin(); *iter < date; iter++) {
 		date -= *iter;
@@ -97,23 +94,36 @@ string Admin::date_to_output(int date) { //validation
 	return month_str + date_str;
 }
 
-void Admin::getToday() const {
+string Admin::getToday() const {
 	struct tm date;
 	time_t timer;
 	timer = time(NULL);
 	localtime_s(&date, &timer);
-	cout << "Today is " << date.tm_mon + 1 << "/" << date.tm_mday << "." << endl;
+	string month_str = to_string(date.tm_mon + 1);
+	string date_str = to_string(date.tm_mday);
+	if (month_str.length() == 1)  month_str = "0" + month_str;
+	if (date_str.length() == 1) date_str = "0" + date_str;
+	return month_str + date_str;
 }
 
 //데이터 관리
-
-void Admin::remove_assignment() {
+void Admin::remove_assignment(string past) { //마감일이 오늘로부터 3일 전이면 과제 삭제
+	map<string, list<std::shared_ptr<Assignment>>>::iterator iter;
+	for (iter = subjects.begin(); iter != subjects.end(); iter++) {
+		list<std::shared_ptr<Assignment>>& asslist = iter->second;
+		for (list<std::shared_ptr<Assignment>>::iterator iterr = asslist.begin(); iterr != asslist.end();) {
+			string dead = (*iterr)->getDeadline();
+			if (dead == past) { asslist.erase(iterr++); }
+			else iterr++;
+		}
+	}
 }
 
-void Admin::ifexit(int input) {
+void Admin::ifexit(int input, string past) {
 	if (input == 0) {
-		getToday();
-		remove_assignment();
+		remove_assignment(past);
+		codetotext();
+		_CrtDumpMemoryLeaks();
 		exit(-1);
 	}
 }
@@ -123,7 +133,7 @@ void Admin::showProfessors() {
 	map<int, Professor*>::const_iterator it;
 	for (it = professors.begin(); it != professors.end(); it++) {
 		Professor* ob = it->second;
-		cout << "id :" << it->first << "// 이름, 과목, OH :" << ob->getName() << "/" << ob->getP_subject() << "/" << ob->getP_oh() << endl;
+		cout << "id :" << it->first << "// 이름, 과목, OH :" << ob->getName() << "/" << ob->getSubject() << "/" << ob->getOh() << endl;
 	}
 }
 void Admin::showStudents() {
@@ -137,11 +147,13 @@ void Admin::showStudents() {
 }
 void Admin::showSubjects() {
 	cout << "@SUBJECT" << endl;
-	map<string, list<Assignment*>>::const_iterator it;
+	map<string, list<std::shared_ptr<Assignment>>>::const_iterator it;
 	for (it = subjects.begin(); it != subjects.end(); it++) {
-		cout << "sub_name :" << it->first << " //";
-		list<Assignment*> ob = it->second;
-		for (list <Assignment*>::const_iterator itt = ob.begin(); itt != ob.end(); itt++)
+		list<std::shared_ptr<Assignment>> ob = it->second;
+		for (list<std::shared_ptr<Assignment>>::const_iterator itt = ob.begin(); itt != ob.end(); itt++)
+		{
+			cout << "sub_name :" << it->first << " //";
 			cout << " 이름, 마감일, 내용 :" << (*(*itt)).getA_name() << "/" << (*(*itt)).getDeadline() << "/" << (*(*itt)).getContents() << endl;
+		}
 	}cout << endl;
 }

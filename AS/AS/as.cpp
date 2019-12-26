@@ -1,4 +1,4 @@
-﻿#include "as.h"
+#include "as.h"
 #include <fstream>
 
 using namespace std;
@@ -46,8 +46,8 @@ std::istream& operator>> (std::istream& i, Student& stu) {
 }
 
 std::istream& operator>> (std::istream& i, list<shared_ptr<Assignment>>&sub) {
-	string subject, name, deadline, contents;
-	i >> subject >> name >> deadline;
+	string name, deadline, contents;
+	i >> name >> deadline;
 	getline(i, contents);
 	Assignment ass(name, deadline, contents);
 	shared_ptr<Assignment> Ass(&ass);
@@ -55,44 +55,69 @@ std::istream& operator>> (std::istream& i, list<shared_ptr<Assignment>>&sub) {
 	return i;
 }
 
-std::istream& operator>>(std::istream& i, string& subname) {
-	string sub;
-	i >> sub;
-	subname = sub;
-	return i;
-}
+//std::istream& operator>>(std::istream& i, string& subname) {
+//	string sub;
+//	i >> sub;
+//	subname = sub;
+//	return i;
+//}
 
 void texttocode() {
 	ifstream txt1("Prof info.txt", ios::in);
-	int numline1 = 0;
-	txt1 >> numline1;
-	for (int i = 0; i < numline1; ++i)
+	while(!txt1.eof())
 	{
-		auto prof = new Professor();
-		txt1 >> *prof;
+		int id;
+		string s, name, sub, oh;
+		getline(txt1, s);
+		stringstream ss(s);
+		ss >> id >> name >> sub >> oh;
+		auto prof = new Professor(id, name, sub, oh);
 		professors[prof->getId()] = prof;
 	}
 
 	ifstream txt2("Stud info.txt", ios::in);
-	int numline2 = 0;
-	txt2 >> numline2;
-	for (int i = 0; i < numline2; ++i)
+	/*int numline2 = 0;
+	while (!txt2.eof()) {
+		string line;
+		getline(txt2, line);
+		numline2++;
+	}
+	txt2.seekg(0);
+	txt2 >> numline2;*/
+	while(!txt2.eof())
 	{
-		auto stu = new Student();
+		int id;
+		string s, name, subject, sub;
+		getline(txt2, s);
+		stringstream ss(s);
+		ss >> id >> name;
+		while (ss >> subject) {
+			sub += subject + " ";
+		}
+		auto stu = new Student(id, name, sub);
 		txt2 >> *stu;
 		students[stu->getId()] = stu;
 	}
 
 	ifstream txt3("Subj info.txt", ios::in);
-	int numline3 = 0;
-	txt3 >> numline3;
-	for (int i = 0; i < numline3; ++i)
+	/*int numline3 = 0;
+	while (!txt3.eof()) {
+		string line;
+		getline(txt3, line);
+		numline3++;
+	}
+	txt3.seekg(0);
+	txt3 >> numline3;*/
+	while(!txt3.eof())
 	{
-		string sub_name;
-		txt3 >> sub_name;
-		list<shared_ptr<Assignment>> sub;
-		txt3 >> sub;
-		subjects[sub_name]=sub;
+		string s, sub_name, as_name, contents, con, deadline;
+		getline(txt3, s);
+		stringstream ss(s);
+		ss >> sub_name >> as_name >> deadline;
+		while (contents.length()!=50) {
+			contents += con + " ";
+		}
+		auto ass = new Assignment(as_name, deadline, contents);
 	}
 	cout << size(professors) << endl;
 	cout << size(students) << endl;

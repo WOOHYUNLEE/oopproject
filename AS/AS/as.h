@@ -1,4 +1,4 @@
-
+#pragma once
 #ifndef _HEADER_
 #define _HEADER_
 
@@ -11,6 +11,7 @@
 #include <iterator>
 #include <iomanip>
 #include <memory>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -21,40 +22,40 @@ class Professor;
 class Subject;
 class Assignment;
 
-extern map<int, Professor*> professors; //ID ë° êµìˆ˜ ì •ë³´
-extern map<int, Student*> students; //ID ë° í•™ìƒ ì •ë³´
-extern map<string, list<std::shared_ptr<Assignment>>> subjects; //ê³¼ëª©ëª… ë° ê³¼ì œëª©ë¡
+extern map<int, Professor*> professors; //ID ¹× ±³¼ö Á¤º¸
+extern map<int, Student*> students; //ID ¹× ÇĞ»ı Á¤º¸
+extern map<string, list<std::shared_ptr<Assignment>>> subjects; //°ú¸ñ¸í ¹× °úÁ¦¸ñ·Ï
 
 class Admin final {
 private:
-	Admin() { setCalendar();  };
+	Admin() { setCalendar(); };
 	~Admin() {};
 
 	template <typename T>
-	void signup(string& info, map<int, T*>& arr); //ê°€ì…
+	void signup(string& info, map<int, T*>& arr); //°¡ÀÔ
 	template <typename T>
-	void login(string& info, map<int, T*>& arr); //ë¡œê·¸ì¸
-	User* connector = nullptr; //í˜„ì¬ ì ‘ì† ì¤‘ì¸ user
+	void login(string& info, map<int, T*>& arr); //·Î±×ÀÎ
+	User* connector = nullptr; //ÇöÀç Á¢¼Ó ÁßÀÎ user
 
-	void convert_signup(string& info, int& id, string& name, string& subject); //ê°€ì…ì„ ìœ„í•œ ë°ì´í„° ë¶„ë¦¬
-	void convert_login(string& info, int& id, string& name); //ë¡œê·¸ì¸ì„ ìœ„í•œ ë°ì´í„° ë¶„ë¦¬
+	void convert_signup(string& info, int& id, string& name, string& subject); //°¡ÀÔÀ» À§ÇÑ µ¥ÀÌÅÍ ºĞ¸®
+	void convert_login(string& info, int& id, string& name); //·Î±×ÀÎÀ» À§ÇÑ µ¥ÀÌÅÍ ºĞ¸®
 
-	list<int> calendar; //ë‹¬ë ¥ ë°ì´í„°
-	void setCalendar(); //ì›”ë³„ë¡œ ë©°ì¹ ê¹Œì§€ ìˆëŠ”ì§€ ì €ì¥
+	list<int> calendar; //´Ş·Â µ¥ÀÌÅÍ
+	void setCalendar(); //¿ùº°·Î ¸çÄ¥±îÁö ÀÖ´ÂÁö ÀúÀå
 
 public:
-	static Admin& getInst(); //Admin ê°ì²´ ìƒì„± ë° ë°˜í™˜
-	void helper(int& action, int& position, string& info); // ê°€ì… or ë¡œê·¸ì¸
-	bool isconnected() const; //ë¡œê·¸ì¸ ì„±ê³µ ì—¬ë¶€(ì ‘ì†ì ì¡´ì¬ ì—¬ë¶€)
-	User& getConnector() const; //í˜„ì¬ ì ‘ì† ì¤‘ì¸ user ë°˜í™˜
-	void setConnector(User* ptr = nullptr); //ì ‘ì†ì ì´ˆê¸°í™” ë° ë³€ê²½
-	void ifexit(int input, string past); //ê³¼ì œ ì œê±°, í…ìŠ¤íŠ¸ ì¶œë ¥, ì¢…ë£Œ
+	static Admin& getInst(); //Admin °´Ã¼ »ı¼º ¹× ¹İÈ¯
+	void helper(int& action, int& position, string& info); // °¡ÀÔ or ·Î±×ÀÎ
+	bool isconnected() const; //·Î±×ÀÎ ¼º°ø ¿©ºÎ(Á¢¼ÓÀÚ Á¸Àç ¿©ºÎ)
+	User& getConnector() const; //ÇöÀç Á¢¼Ó ÁßÀÎ user ¹İÈ¯
+	void setConnector(User* ptr = nullptr); //Á¢¼ÓÀÚ ÃÊ±âÈ­ ¹× º¯°æ
+	void ifexit(int input, string past); //°úÁ¦ Á¦°Å, ÅØ½ºÆ® Ãâ·Â, Á¾·á
 
 	string getToday() const;
-	int input_to_date(string input); //1231ì„ 365ë¡œ ë°”ê¾¸ëŠ” í•¨ìˆ˜
-	string date_to_output(int date); //365ë¥¼ 1231ë¡œ ë°”ê¾¸ëŠ” í•¨ìˆ˜
+	int input_to_date(string input); //1231À» 365·Î ¹Ù²Ù´Â ÇÔ¼ö
+	string date_to_output(int date); //365¸¦ 1231·Î ¹Ù²Ù´Â ÇÔ¼ö
 
-	void remove_assignment(string past); //ë§ˆê°ì¼ì´ ì˜¤ëŠ˜ë¡œë¶€í„° 3ì¼ ì „ì´ë©´ ê³¼ì œ ì‚­ì œ
+	void remove_assignment(string past); //¸¶°¨ÀÏÀÌ ¿À´Ã·ÎºÎÅÍ 3ÀÏ ÀüÀÌ¸é °úÁ¦ »èÁ¦
 
 	void showProfessors();
 	void showStudents();
@@ -90,15 +91,15 @@ public:
 		p_oh = oh;
 	}
 
-	void assign(Admin& ad); //ê³¼ì œ ë¶€ì—¬
-	int getMaxNum_period(string date, Admin& ad) const;  //í•™ìƒë“¤ ì¤‘ì— dateë¥¼ ê¸°ì¤€ìœ¼ë¡œ 7ì¼ ì´ë‚´ì— ê³¼ì œ ê°œìˆ˜ì˜ ìµœëŒ“ê°’
-	static string getbefore_period(string date); //dateì˜ 3ì¼ ì „ ë‚ ì§œ ë°˜í™˜
-	int getMaxNum_day(string date) const; //í•™ìƒë“¤ ì¤‘ ê°™ì€ ë‚ ì— ë§ˆê°ì¸ ë‹¤ë¥¸ ê³¼ì œì˜ ê°œìˆ˜ì˜ ìµœëŒ“ê°’ 
-	void warning(string date, Admin& ad) const; //ì£¼ì˜ì°½ ì¶œë ¥
-	void save(Assignment& ass); //sujectsì— ê³¼ì œ ì €ì¥
+	void assign(Admin& ad); //°úÁ¦ ºÎ¿©
+	int getMaxNum_period(string date, Admin& ad) const;  //ÇĞ»ıµé Áß¿¡ date¸¦ ±âÁØÀ¸·Î 7ÀÏ ÀÌ³»¿¡ °úÁ¦ °³¼öÀÇ ÃÖ´ñ°ª
+	static string getbefore_period(string date); //dateÀÇ 3ÀÏ Àü ³¯Â¥ ¹İÈ¯
+	int getMaxNum_day(string date) const; //ÇĞ»ıµé Áß °°Àº ³¯¿¡ ¸¶°¨ÀÎ ´Ù¸¥ °úÁ¦ÀÇ °³¼öÀÇ ÃÖ´ñ°ª 
+	void warning(string date, Admin& ad) const; //ÁÖÀÇÃ¢ Ãâ·Â
+	void save(Assignment& ass); //sujects¿¡ °úÁ¦ ÀúÀå
 
-	void edit_oh(); //Oh í¸ì§‘
-	void check_assignment() const; //ê³¼ì œ í™•ì¸
+	void edit_oh(); //Oh ÆíÁı
+	void check_assignment() const; //°úÁ¦ È®ÀÎ
 
 	string getSubject() { return p_subject; }
 	string getOh() { return p_oh; }
@@ -118,9 +119,9 @@ public:
 			s_subjects.push_back(str);
 		}
 	}
-	void check_sujects() const; //ê³¼ëª© í™•ì¸
-	void check_assignment() const; //ê³¼ì œ í™•ì¸
-	void check_oh() const; //Oh í™•ì¸
+	void check_sujects() const; //°ú¸ñ È®ÀÎ
+	void check_assignment() const; //°úÁ¦ È®ÀÎ
+	void check_oh() const; //Oh È®ÀÎ
 
 	list<string> get_subjects() { return s_subjects; };
 	string getPosition() { return "Student"; }
@@ -151,7 +152,7 @@ void Admin::signup(string& info, map<int, T*>& arr) {
 	string subject;
 	convert_signup(info, id, name, subject);
 	if (arr.find(id) != arr.end()) {
-		cout << "ì…ë ¥í•˜ì‹  ì •ë³´ê°€ ì´ë¯¸ ì¡´ì¬í•©ë‹ˆë‹¤." << endl;
+		cout << "ÀÔ·ÂÇÏ½Å Á¤º¸°¡ ÀÌ¹Ì Á¸ÀçÇÕ´Ï´Ù." << endl;
 		return;
 	}
 	T* user = new T(id, name, subject);
@@ -164,17 +165,15 @@ void Admin::login(string& info, map<int, T*>& arr) {
 	string name;
 	convert_login(info, id, name);
 	try {
-		T* user = arr.at(id); //ì¡´ì¬ ì—¬ë¶€ì—ì„œ ì—ëŸ¬
-		if (user->getName() != name) throw 1; //ê°™ì§€ ì•Šì„ ë•Œ ì—ëŸ¬
+		T* user = arr.at(id); //Á¸Àç ¿©ºÎ¿¡¼­ ¿¡·¯
+		if (user->getName() != name) throw 1; //°°Áö ¾ÊÀ» ¶§ ¿¡·¯
 		setConnector(user);
 	}
 	catch (...) {
-		cout << "ì…ë ¥í•˜ì‹  ì •ë³´ë¥¼ ë‹¤ì‹œ í™•ì¸í•´ì£¼ì„¸ìš”." << endl;
+		cout << "ÀÔ·ÂÇÏ½Å Á¤º¸¸¦ ´Ù½Ã È®ÀÎÇØÁÖ¼¼¿ä." << endl;
 	}
 }
 extern void texttocode();
 extern void codetotext();
 
 #endif // !_HEADER_
-
-
